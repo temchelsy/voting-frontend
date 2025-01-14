@@ -3,6 +3,7 @@ import { X, Upload } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { useAuth } from '../../Pages/Contexts/AuthContext'; 
+import API_URL from '../../Pages/Constants/Constants';
 
 const ContestModal = ({ isOpen, onClose, setContests }) => {
   const [formData, setFormData] = useState({
