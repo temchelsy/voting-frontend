@@ -21,7 +21,7 @@ const Profile = ({ isAuthenticated }) => {
       }
 
       try {
-        const response = await fetch(`${API_URL}//users/profile`, {
+        const response = await fetch(`${API_URL}/users/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

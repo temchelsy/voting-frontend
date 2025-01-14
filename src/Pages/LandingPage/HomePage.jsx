@@ -176,6 +176,63 @@ const HomePage = () => {
   </div>
 </section>
 
+<section className="py-16 bg-gray-100">
+        <div className="container mx-auto text-center">
+          <h1 className="text-3xl md:text-5xl font-bold text-button-c">
+            How Does It Work?
+          </h1>
+          <p className="mt-4 text-lg text-gray-700">
+            Our voting system is flexible to meet the unique needs of our customers, 
+            but all internet voting projects follow the same basic flow.
+          </p>
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                step: "01",
+                title: "Election Set-Up",
+                description: `
+                  By utilizing our intuitive Election Manager, define your election 
+                  including dates, times, and ballot questions. Select a voter authentication 
+                  method and upload your list of eligible voters. Our support team is ready 
+                  to assist or even manage the process for you as a premium service.
+                `,
+              },
+              {
+                step: "02",
+                title: "Voting",
+                description: `
+                  At your branded voting website, voters log in according to the 
+                  authentication method chosen. After authentication, voters cast their 
+                  votes on a tamper-proof electronic ballot. Each vote is encrypted, 
+                  ensuring anonymity. Voters receive a receipt after submission, 
+                  preventing multiple votes in the same election.
+                `,
+              },
+              {
+                step: "03",
+                title: "Results",
+                description: `
+                  At the end of the voting period, results are instantly tabulated 
+                  and reviewed in the Election Manager. Detailed voting activity 
+                  reports are available before publishing. Once published, results 
+                  are displayed publicly, and anyone can verify the results via a 
+                  downloadable file containing the votes and corresponding receipt codes.
+                `,
+              },
+            ].map(({ step, title, description }, idx) => (
+              <div
+                key={idx}
+                className="p-6 bg-white rounded-lg shadow-md text-center flex flex-col items-center"
+              >
+                <h2 className="text-6xl font-bold text-button-c">{step}</h2>
+                <h3 className="mt-4 text-xl font-bold text-gray-800">{title}</h3>
+                <p className="mt-2 text-gray-600">{description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Awards Section */}
       <section className="py-16 bg-custom-cyan">
   <div className="container mx-auto text-center">

@@ -8,7 +8,6 @@ import { useAuth } from "../Contexts/AuthContext";
 import ContestItem from "../../Components/ContestItem";
 import API_URL from '../../Pages/Constants/Constants';
 
-
 const Overview = () => {
   const { currentUser, currentUserLoading, isAuthenticated } = useAuth();
   const [contests, setContests] = useState([]);
@@ -17,13 +16,13 @@ const Overview = () => {
   const [selectedContestId, setSelectedContestId] = useState(null);
   const [publishedContests, setPublishedContests] = useState(new Set());
   const [loading, setLoading] = useState(true);
-
   const [editingContest, setEditingContest] = useState(null);
 
   const getAuthHeaders = useCallback(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      throw new Error("Authentication token missing");
+      toast.error("You are not authenticated. Please log in again.");
+      return null; // Return null to indicate no headers are available
     }
     return { Authorization: `Bearer ${token}` };
   }, []);
@@ -63,6 +62,8 @@ const Overview = () => {
 
     try {
       const headers = getAuthHeaders();
+      if (!headers) return; // If headers are null, stop the action
+
       const isPublished = !publishedContests.has(contestId);
 
       const response = await axios.patch(
@@ -113,13 +114,16 @@ const Overview = () => {
         return;
       }
 
+      const headers = getAuthHeaders();
+      if (!headers) return; // If headers are null, stop the action
+
       const response = await axios.post(
         `${API_URL}/contests/${contestId}/vote`,
         { contestantId: formattedContestantId },
         {
           headers: {
             'Content-Type': 'application/json',
-            ...getAuthHeaders()  
+            ...headers
           }
         }
       );
@@ -136,18 +140,20 @@ const Overview = () => {
       toast.error(errorMessage);
     }
   };
-  
-  
-  
+
   const handleDeleteContest = async (contestId) => {
     try {
       const headers = getAuthHeaders();
+      if (!headers) return; // If headers are null, stop the action
+
       await axios.delete(`${API_URL}/contests/${contestId}`, { headers });
       setContests((prev) => prev.filter((contest) => contest._id !== contestId));
       toast.success("Contest deleted successfully");
     } catch (error) {
       console.error("Delete contest error:", error);
-      toast.error("Failed to delete contest");
+      toast.error(
+        error.response?.data?.error || "Failed to delete contest. Please try again."
+      );
     }
   };
 
@@ -217,7 +223,6 @@ const Overview = () => {
         contestId={selectedContestId}
         setContests={setContests}
         contestStatus={contests.isPublished ? 'Published' : 'Draft'}
-
       />
     </div>
   );
