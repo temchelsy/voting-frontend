@@ -42,22 +42,27 @@ const Login = () => {
         },
         body: JSON.stringify(data),
       });
-
-      setLoading(false);
-
+  
       if (response.ok) {
         const { accessToken, refreshToken } = await response.json();
+        console.log('Token received:', !!accessToken); // Debug log
         localStorage.setItem("token", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
-        setRefetchCurrentUser((prev) => !prev);
+        // Trigger a refresh of the current user
+        setRefetchCurrentUser(prev => !prev);
         toast.success("Login Successful");
-        navigate("/dashboard");
+        // Wait a brief moment for the auth state to update
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 100);
       } else {
         const errorData = await response.json();
-        toast.error(errorData.message || "Login failed");
+        toast.error(errorData.msg || "Login failed");
       }
     } catch (error) {
+      console.error('Login error:', error);
       toast.error("An error occurred during login. Please try again later.");
+    } finally {
       setLoading(false);
     }
   };
@@ -65,19 +70,11 @@ const Login = () => {
   return (
     <>
       <section className="bg-custom-first min-h-screen flex items-center justify-center">
-        <div className="flex flex-col lg:flex-row w-full max-w-7xl px-6 py-8 gap-12 lg:gap-24 3xl:max-w-[120rem] 3xl:px-16">
-          <div className="flex flex-col justify-center items-start w-full lg:w-1/2">
-            <h1 className="text-4xl font-bold text-center lg:text-left text-white mb-4 3xl:text-6xl">
+        <div className="flex flex-col w-full max-w-md px-6 py-8 space-y-8">
+          {/* Centered Content */}
+          <div className="bg-custom-second rounded-lg shadow-md p-6 space-y-4 sm:p-8">
+            <h2 className="text-2xl font-bold text-center mb-6 text-white 3xl:text-4xl">
               {greeting}!
-            </h1>
-            <p className="text-lg text-center lg:text-left text-white mb-8 3xl:text-2xl">
-              Your journey starts here. Log in to access your dashboard and explore new opportunities!
-            </p>
-          </div>
-
-          <div className="w-full lg:w-1/2 bg-custom-second rounded-lg shadow-md p-6 space-y-4 sm:p-8 3xl:p-16">
-            <h2 className="text-2xl font-bold text-center mb-6 3xl:text-4xl text-white">
-              Login
             </h2>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -91,7 +88,7 @@ const Login = () => {
                 <input
                   {...register("email", { required: "Email is required" })}
                   type="email"
-                  className="bg-white border border-gray-300 w-full p-2.5 rounded-lg 3xl:h-24 3xl:w-[50rem] 3xl:text-3xl"
+                  className="bg-white border border-gray-300 w-full p-2.5 rounded-lg 3xl:h-24 3xl:w-full 3xl:text-3xl"
                   placeholder="name@gmail.com"
                 />
                 {errors.email && (
@@ -112,7 +109,7 @@ const Login = () => {
                       required: "Password is required",
                     })}
                     type={passwordVisible ? "text" : "password"}
-                    className="bg-white border border-gray-300 w-full p-2.5 rounded-lg 3xl:h-24 3xl:w-[50rem] 3xl:text-3xl"
+                    className="bg-white border border-gray-300 w-full p-2.5 rounded-lg 3xl:h-24 3xl:w-full 3xl:text-3xl"
                     placeholder="••••••••"
                   />
                   <button

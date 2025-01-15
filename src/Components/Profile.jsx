@@ -1,57 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { CiLogout } from "react-icons/ci";
 import { useAuth } from "../Pages/Contexts/AuthContext";
 import { UserCircle } from "lucide-react";
-import API_URL from "../Pages/Constants/Constants";
 
-const Profile = ({ isAuthenticated }) => {
-  const { logout } = useAuth();
-  const [email, setEmail] = useState(null);
-  const [loading, setLoading] = useState(true);
+const Profile = () => {
+  const { currentUser, currentUserLoading, logout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchEmail = async () => {
-      const token = localStorage.getItem("token");
-      if (!isAuthenticated || !token) {
-        navigate("/dashboard");
-        return;
-      }
-
-      try {
-        const response = await fetch(`${API_URL}/users/profile`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          toast.error(errorData.error || "Failed to fetch email.");
-          return;
-        }
-
-        const data = await response.json();
-        setEmail(data.email);
-      } catch (error) {
-        console.error("Error fetching email:", error);
-        toast.error("An unexpected error occurred.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEmail();
-  }, [isAuthenticated, navigate]);
+    if (!currentUserLoading && !currentUser) {
+      navigate("/login");
+    }
+  }, [currentUser, currentUserLoading, navigate]);
 
   const handleLogout = () => {
+    console.log('Logging out...'); // Debug log
     logout();
     navigate("/login");
+    toast.success("Logged out successfully");
   };
 
-  if (loading) {
+  if (currentUserLoading) {
     return (
       <div className="flex items-center justify-center h-full bg-neutral-900">
         <div className="animate-pulse text-lg text-gray-300">
@@ -61,12 +32,8 @@ const Profile = ({ isAuthenticated }) => {
     );
   }
 
-  if (!email) {
-    return (
-      <div className="flex items-center justify-center h-full bg-neutral-900">
-        <div className="text-lg text-gray-300">No profile found.</div>
-      </div>
-    );
+  if (!currentUser) {
+    return null; // Will redirect in useEffect
   }
 
   return (
@@ -80,7 +47,7 @@ const Profile = ({ isAuthenticated }) => {
           <div className="text-center">
             <span className="text-sm text-gray-400">Email</span>
             <h3 className="text-lg font-medium text-white break-all">
-              {email}
+              {currentUser.email}
             </h3>
           </div>
 
@@ -99,7 +66,7 @@ const Profile = ({ isAuthenticated }) => {
       <div className="mt-6 w-full px-4">
         <div className="text-sm text-gray-400 text-center">
           Logged in as
-          <span className="text-white ml-1 font-medium">{email}</span>
+          <span className="text-white ml-1 font-medium">{currentUser.email}</span>
         </div>
       </div>
     </div>

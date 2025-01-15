@@ -29,13 +29,13 @@ const HomePage = () => {
       {/* Hero Section */}
       <section
         id="homepage"
-        className="relative text-white bg-cover bg-center"
+        className="relative text-white bg-cover bg-center bg-custom-blue"
         style={{
-          backgroundImage: `url(${homePageImage})`,
+          
           height: '80vh',
         }}
       >
-        <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+        <div className="absolute inset-0  bg-opacity-60"></div>
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold">
             Empowering <span className="text-button-c">The</span> Future
@@ -236,7 +236,7 @@ const HomePage = () => {
       {/* Awards Section */}
       <section className="py-16 bg-custom-cyan">
   <div className="container mx-auto text-center">
-    <h1 className="text-3xl md:text-5xl font-bold">Awards</h1>
+    <h1 className="text-3xl md:text-5xl font-bold text-cyan-500">Awards</h1>
     <p className="mt-4 text-lg text-gray-700">
       Awards Schemes and Categories
     </p>

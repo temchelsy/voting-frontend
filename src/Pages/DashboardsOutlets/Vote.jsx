@@ -173,7 +173,7 @@ const Vote = () => {
         </div>
       </div>
     </div>
-    <Footer/>
+  
     </>
   );
 };

@@ -50,7 +50,7 @@ const App = () => {
                 alt="Logo"
                 className="h-12 w-20 rounded-md ml-2 3xl:w-44 3xl:h-24 3xl:mr-2"
               />
-              <span className="text-2xl md:text-4xl lg:text-4xl italic font-bold ml-4">
+              <span className="text-2xl md:text-4xl lg:text-4xl italic font-bold ml-4 text-button-c">
                 Electrify
               </span>
             </div>
