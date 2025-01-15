@@ -174,21 +174,23 @@ const Overview = () => {
   }
 
   return (
-    <div className="flex flex-col h-lvh bg-gray-50 p-6 space-y-6 overflow-auto w-full xl:w-[102rem] 3xl:w-[138rem]">
-      <div className="flex items-center justify-between w-full gap-3">
-        <h1 className="text-xl font-bold text-gray-800">Overview</h1>
+    <div className="flex flex-col h-lvh bg-gray-50 p-6 space-y-6 overflow-auto w-full xl:w-[102rem] 3xl:w-[138rem] m-3">
+      <div className="flex  items-center justify-between w-full gap-3">
+        <h1 className="text-xl font-bold text-gray-800 flex-shrink-0">
+          Overview
+        </h1>
         <button
           onClick={() => {
             setEditingContest(null);
             setIsModalOpen(true);
           }}
-          className="bg-custom-blue hover:bg-custom-blue/90 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors duration-200"
+          className="bg-custom-blue hover:bg-custom-blue/90 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors duration-200 "
         >
           <Plus className="h-4 w-4" />
           Create Contest
         </button>
       </div>
-
+  
       {contests.length === 0 ? (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-blue-700">
           No contests found. Create your first contest to get started!
@@ -210,7 +212,7 @@ const Overview = () => {
           ))}
         </div>
       )}
-
+  
       <ContestModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -226,6 +228,6 @@ const Overview = () => {
       />
     </div>
   );
-};
+}  
 
 export default Overview;

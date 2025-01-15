@@ -37,11 +37,9 @@ const Profile = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-start bg-neutral-900 h-full p-4 w-full transition-all duration-300 lg:min-w-64">
+    <div className="flex flex-col items-center justify-start bg-neutral-900 h-full p-4 w-full transition-all duration-300 lg:min-w-40">
       <div className="bg-neutral-800 w-full flex flex-col items-center p-6 rounded-lg shadow-lg space-y-4">
-        <div className="relative w-24 h-24 mb-2">
-          <UserCircle className="w-full h-full text-gray-400" />
-        </div>
+        
 
         <div className="space-y-2 w-full">
           <div className="text-center">
@@ -64,10 +62,7 @@ const Profile = () => {
       </div>
 
       <div className="mt-6 w-full px-4">
-        <div className="text-sm text-gray-400 text-center">
-          Logged in as
-          <span className="text-white ml-1 font-medium">{currentUser.email}</span>
-        </div>
+        
       </div>
     </div>
   );
