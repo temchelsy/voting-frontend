@@ -1,64 +1,80 @@
 import React from "react";
-import { MdLocationOn } from "react-icons/md";
-import { MdMarkEmailRead } from "react-icons/md";
-import { FaPhoneVolume } from "react-icons/fa6";
-import { BsFacebook } from "react-icons/bs";
-import { FaLinkedin } from "react-icons/fa";
-import { FaTwitter } from "react-icons/fa";
+import { MdLocationOn, MdMarkEmailRead } from "react-icons/md";
+import { FaPhoneVolume, FaFacebook, FaLinkedin, FaTwitter } from "react-icons/fa";
 
 const Footer = () => {
   return (
     <>
-      <section className="flex flex-col md:flex-row items-start justify-around bg-custom-blue text-white p-5 3xl:h-[25rem] 2xl:gap-96">
-        <div className="flex flex-col justify-center gap-5 items-start">
-          <h1 className="text-xl md:text-2xl  3xl:text-5xl">VoteHub</h1>
-          <p className="text-sm md:text-base 3xl:text-2xl">
-            {" "}
-            the only secured, safe <br /> and user-friendly platform that makes
-            your vote count ,
-            <br />
-            remember to vote for your future leader
-          </p>
-        </div>
-        <div className="flex flex-col items-start justify-center gap-5">
-          <h1 className="text-xl md:text-2xl 3xl:text-5xl items-start ">
-            Contacts
-          </h1>
-          <div className="flex items-center justify-center gap-2 3xl:text-2xl">
-            {" "}
-            <MdLocationOn /> <span>VoteHub jouvence, Yaounde</span>{" "}
+      {/* Main Footer Section */}
+      <footer className="bg-custom-blue py-10">
+        <div className="container mx-auto px-5 grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* About Electrify */}
+          <div>
+            <h1 className="text-2xl font-bold text-gray-200 mb-4">Electrify</h1>
+            <p className="text-gray-300 text-sm md:text-base leading-6">
+              Empowering citizens to make informed decisions and have their voices heard. 
+              Your vote is your power—use it wisely. Together, we shape the future of democracy.
+            </p>
           </div>
-          <div className="flex items-center justify-center gap-2 3xl:text-2xl">
-            {" "}
-            <MdMarkEmailRead /> <h1>VoteHub@gmail.com</h1>{" "}
+
+          {/* Contact Information */}
+          <div>
+            <h1 className="text-2xl font-bold text-gray-200 mb-4">Contact Us</h1>
+            <ul className="space-y-3">
+              <li className="flex items-center gap-3 text-gray-300">
+                <MdLocationOn size={20} />
+                <span>Electrify Office, Jouvence, Yaounde</span>
+              </li>
+              <li className="flex items-center gap-3 text-gray-300">
+                <MdMarkEmailRead size={20} />
+                <span>Electrify@gmail.com</span>
+              </li>
+              <li className="flex items-center gap-3 text-gray-300">
+                <FaPhoneVolume size={20} />
+                <span>+237 696 736 947</span>
+              </li>
+            </ul>
           </div>
-          <div className="flex items-center justify-center gap-2 3xl:text-2xl">
-            {" "}
-            <FaPhoneVolume /> <span>+237676184440</span>{" "}
+
+          {/* Social Media Links */}
+          <div>
+            <h1 className="text-2xl font-bold text-gray-200 mb-4">Follow Us</h1>
+            <p className="text-gray-300 text-sm md:text-base mb-4">
+              Stay updated with the latest news and initiatives about voting and civic engagement.
+            </p>
+            <div className="flex items-center gap-4">
+              <a
+                href="#"
+                className="text-gray-300 hover:text-gray-400 transition"
+                aria-label="Facebook"
+              >
+                <FaFacebook size={30} />
+              </a>
+              <a
+                href="#"
+                className="text-gray-300 hover:text-gray-400 transition"
+                aria-label="LinkedIn"
+              >
+                <FaLinkedin size={30} />
+              </a>
+              <a
+                href="#"
+                className="text-gray-300 hover:text-gray-400 transition"
+                aria-label="Twitter"
+              >
+                <FaTwitter size={30} />
+              </a>
+            </div>
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center gap-5">
-          {" "}
-          <h1 className="text-xl md:text-2xl 3xl:text-5xl">Follow us on</h1>
-          <div className="flex items-center justify-center gap-2">
-            {" "}
-            <a href="#">
-              <BsFacebook className="w-8 h-8  3xl:w-14 3xl:h-14" />
-            </a>
-            <a href="#">
-              <FaLinkedin className="w-8 h-8 3xl:w-14 3xl:h-14" />
-            </a>{" "}
-            <a href="#">
-              <FaTwitter className="w-8 h-8  3xl:w-14 3xl:h-14" />
-            </a>{" "}
-          </div>{" "}
+      </footer>
+
+      {/* Footer Bottom Section */}
+      <div className="bg-custom-blue py-4">
+        <div className="container mx-auto px-5 text-center text-sm text-gray-300">
+          &copy; {new Date().getFullYear()} Electrify. Empowering every vote, every voice.
         </div>
-      </section>
-      <section className=" w-full bg-custom-blue h-14 flex items-center justify-start ">
-        <div className="flex flex-col items-start justify-center text-white ml-5">
-          copy right since 2024
-        </div>
-      </section>
+      </div>
     </>
   );
 };

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { X, Upload } from 'lucide-react';
+import { X, Upload, Loader2 } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { useAuth } from '../../Pages/Contexts/AuthContext'; 
+import API_URL from '../../Pages/Constants/Constants';
 
 const ContestModal = ({ isOpen, onClose, setContests }) => {
   const [formData, setFormData] = useState({
@@ -56,9 +57,7 @@ const ContestModal = ({ isOpen, onClose, setContests }) => {
       }
 
       const submitData = new FormData();
-
       submitData.append('userId', currentUser.id);
-
       submitData.append('name', formData.name);
       submitData.append('description', formData.description);
       submitData.append('startDate', formData.startDate);
@@ -78,7 +77,6 @@ const ContestModal = ({ isOpen, onClose, setContests }) => {
 
       if (response.data?.success) {
         setContests((prev) => [...prev, response.data.data]);
-
         setFormData({
           name: '',
           coverPhoto: null,
@@ -102,83 +100,95 @@ const ContestModal = ({ isOpen, onClose, setContests }) => {
 
   return (
     <div
-      className={`fixed inset-0 bg-custom-blue bg-opacity-50 flex justify-center items-center ${
+      className={`fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center p-4 ${
         !isOpen ? 'hidden' : ''
       }`}
     >
-      <div className="bg-custom-blue rounded-lg p-6 w-full max-w-lg text-slate-50">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-xl font-semibold">Create Contest</h1>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-500">
-            <X className="h-6 w-6" />
-          </button>
-        </div>
-
-        {error && (
-          <div className="mb-4 p-4 bg-red-50 text-red-600 rounded-lg">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <label htmlFor="name" className="block text-sm font-medium">
-              Contest Name
-            </label>
-            <input
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded-lg p-2 w-full text-gray-900"
-              required
-            />
+      <div className="bg-custom-blue rounded-lg w-full max-w-lg mx-auto overflow-y-auto max-h-[90vh] shadow-xl">
+        <div className="p-4 sm:p-6">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-lg sm:text-xl font-semibold text-slate-50">Create Contest</h1>
+            <button 
+              onClick={onClose}
+              className="text-slate-300 hover:text-slate-100 transition-colors p-1"
+            >
+              <X className="h-5 w-5 sm:h-6 sm:w-6" />
+            </button>
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="description" className="block text-sm font-medium">
-              Contest Description
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded-lg p-2 w-full text-gray-900"
-              rows="4"
-              placeholder="Enter a short description for the contest"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">Cover Photo</label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-              <input
-                type="file"
-                id="coverPhoto"
-                className="hidden"
-                accept="image/*"
-                onChange={handleCoverPhotoChange}
-              />
-              <label htmlFor="coverPhoto" className="cursor-pointer">
-                <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                <span className="mt-2 block text-sm text-gray-400">
-                  Click to upload cover photo
-                </span>
-              </label>
-              {formData.coverPhoto && (
-                <p className="mt-2 text-sm text-gray-400">
-                  Selected: {formData.coverPhoto.name}
-                </p>
-              )}
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 p-3 sm:p-4 bg-red-50 text-red-600 rounded-lg text-sm">
+              {error}
             </div>
-          </div>
+          )}
 
-          <div className="space-y-2">
-            <div className="flex space-x-4">
-              <div className="flex-1">
-                <label htmlFor="startDate" className="block text-sm font-medium">
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+            {/* Contest Name */}
+            <div className="space-y-1 sm:space-y-2">
+              <label htmlFor="name" className="block text-sm font-medium text-slate-50">
+                Contest Name
+              </label>
+              <input
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
+
+            {/* Description */}
+            <div className="space-y-1 sm:space-y-2">
+              <label htmlFor="description" className="block text-sm font-medium text-slate-50">
+                Contest Description
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                rows="3"
+                placeholder="Enter a short description for the contest"
+                required
+              />
+            </div>
+
+            {/* Cover Photo Upload */}
+            <div className="space-y-1 sm:space-y-2">
+              <label className="block text-sm font-medium text-slate-50">
+                Cover Photo
+              </label>
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                <input
+                  type="file"
+                  id="coverPhoto"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleCoverPhotoChange}
+                />
+                <label htmlFor="coverPhoto" className="cursor-pointer block">
+                  <Upload className="mx-auto h-8 w-8 sm:h-12 sm:w-12 text-gray-400" />
+                  <span className="mt-2 block text-xs sm:text-sm text-gray-400">
+                    Click to upload cover photo
+                  </span>
+                  {formData.coverPhoto && (
+                    <p className="mt-2 text-xs sm:text-sm text-gray-400 truncate">
+                      Selected: {formData.coverPhoto.name}
+                    </p>
+                  )}
+                </label>
+              </div>
+            </div>
+
+            {/* Date Selection */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1 sm:space-y-2">
+                <label htmlFor="startDate" className="block text-sm font-medium text-slate-50">
                   Start Date
                 </label>
                 <input
@@ -187,12 +197,12 @@ const ContestModal = ({ isOpen, onClose, setContests }) => {
                   name="startDate"
                   value={formData.startDate}
                   onChange={handleInputChange}
-                  className="border border-gray-300 rounded-lg p-2 w-full text-gray-900"
+                  className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   required
                 />
               </div>
-              <div className="flex-1">
-                <label htmlFor="endDate" className="block text-sm font-medium">
+              <div className="space-y-1 sm:space-y-2">
+                <label htmlFor="endDate" className="block text-sm font-medium text-slate-50">
                   End Date
                 </label>
                 <input
@@ -201,31 +211,39 @@ const ContestModal = ({ isOpen, onClose, setContests }) => {
                   name="endDate"
                   value={formData.endDate}
                   onChange={handleInputChange}
-                  className="border border-gray-300 rounded-lg p-2 w-full text-gray-900"
+                  className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   required
                 />
               </div>
             </div>
-          </div>
 
-          <div className="flex justify-between items-center space-x-2 mt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="text-white py-2 px-4 rounded-lg border border-white hover:bg-white hover:text-custom-blue transition-colors"
-              disabled={isSubmitting}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="text-white bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded-lg disabled:opacity-50 transition-colors"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Creating...' : 'Create Contest'}
-            </button>
-          </div>
-        </form>
+            {/* Action Buttons */}
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4">
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-full sm:w-auto text-slate-50 px-4 py-2 rounded-lg border border-slate-50 hover:bg-slate-50 hover:text-custom-blue transition-colors text-sm sm:text-base disabled:opacity-50"
+                disabled={isSubmitting}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base disabled:opacity-50 flex items-center justify-center"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                    Creating...
+                  </>
+                ) : (
+                  'Create Contest'
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
