@@ -21,21 +21,75 @@ const Overview = () => {
   const getAuthHeaders = useCallback(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      toast.error("You are not authenticated. Please log in again.");
-      return null;
+      throw new Error("Authentication token missing");
     }
     return { Authorization: `Bearer ${token}` };
   }, []);
 
+  const calculateWinners = useCallback((contestsData) => {
+    return contestsData.map((contest) => {
+      const now = new Date();
+      const endDate = new Date(contest.endDate);
+
+      if (endDate < now && contest.contestants?.length > 0) {
+        const sortedContestants = [...contest.contestants].sort(
+          (a, b) => (b.votes || 0) - (a.votes || 0)
+        );
+
+        const highestVotes = sortedContestants[0].votes || 0;
+
+        const winners = sortedContestants.filter(
+          (contestant) => (contestant.votes || 0) === highestVotes
+        );
+
+        const updatedContestants = contest.contestants.map((contestant) => ({
+          ...contestant,
+          isWinner: winners.some((winner) => winner._id === contestant._id),
+        }));
+
+        const sortedUpdatedContestants = [...updatedContestants].sort(
+          (a, b) => {
+            if (a.isWinner && !b.isWinner) return -1;
+            if (!a.isWinner && b.isWinner) return 1;
+            return (b.votes || 0) - (a.votes || 0);
+          }
+        );
+
+        return {
+          ...contest,
+          contestants: sortedUpdatedContestants,
+          hasEnded: true,
+        };
+      }
+
+      return {
+        ...contest,
+        contestants: [...(contest.contestants || [])].sort(
+          (a, b) => (b.votes || 0) - (a.votes || 0)
+        ),
+        hasEnded: false,
+      };
+    });
+  }, []);
+
   const fetchContests = useCallback(async () => {
     try {
+      if (!isAuthenticated) {
+        console.log("User not authenticated, skipping fetch");
+        return;
+      }
+
       setLoading(true);
-      const response = await axios.get(`${API_URL}/contests/all`);
+      const headers = getAuthHeaders();
+
+      const response = await axios.get(`${API_URL}/contests/all`, { headers });
+      console.log("Received contests data:", response.data);
 
       if (response.data?.success) {
-        setContests(response.data.data);
+        const processedContests = calculateWinners(response.data.data);
+        setContests(processedContests);
         const publishedSet = new Set(
-          response.data.data
+          processedContests
             .filter((contest) => contest.isPublished)
             .map((contest) => contest._id)
         );
@@ -47,11 +101,7 @@ const Overview = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
-
-  useEffect(() => {
-    fetchContests();
-  }, [fetchContests]);
+  }, [calculateWinners, getAuthHeaders, isAuthenticated]);
 
   const handlePublishToggle = async (contestId) => {
     const contest = contests.find((c) => c._id === contestId);
@@ -62,8 +112,6 @@ const Overview = () => {
 
     try {
       const headers = getAuthHeaders();
-      if (!headers) return;
-
       const isPublished = !publishedContests.has(contestId);
 
       const response = await axios.patch(
@@ -83,19 +131,16 @@ const Overview = () => {
           return newSet;
         });
 
-        setContests((prev) =>
-          prev.map((c) =>
-            c._id === contestId ? { ...c, isPublished: isPublished } : c
-          )
-        );
-
+        await fetchContests();
         toast.success(
           isPublished ? "Contest published!" : "Contest unpublished"
         );
       }
     } catch (error) {
       console.error("Publish toggle error:", error);
-      toast.error(error.response?.data?.error || "Failed to update contest status");
+      toast.error(
+        error.response?.data?.error || "Failed to update contest status"
+      );
     }
   };
 
@@ -103,6 +148,12 @@ const Overview = () => {
     try {
       if (!contestId || !contestantId) {
         toast.error("Invalid contest or contestant ID");
+        return;
+      }
+
+      const contest = contests.find((c) => c._id === contestId);
+      if (contest?.hasEnded) {
+        toast.error("This contest has ended");
         return;
       }
 
@@ -114,16 +165,13 @@ const Overview = () => {
         return;
       }
 
-      const headers = getAuthHeaders();
-      if (!headers) return;
-
       const response = await axios.post(
         `${API_URL}/contests/${contestId}/vote`,
         { contestantId: formattedContestantId },
         {
           headers: {
             "Content-Type": "application/json",
-            ...headers,
+            ...getAuthHeaders(),
           },
         }
       );
@@ -137,7 +185,9 @@ const Overview = () => {
     } catch (error) {
       console.error("Voting error:", error);
       const errorMessage =
-        error.response?.data?.error || error.message || "Failed to cast your vote";
+        error.response?.data?.error ||
+        error.message ||
+        "Failed to cast your vote";
       toast.error(errorMessage);
     }
   };
@@ -145,16 +195,14 @@ const Overview = () => {
   const handleDeleteContest = async (contestId) => {
     try {
       const headers = getAuthHeaders();
-      if (!headers) return;
-
       await axios.delete(`${API_URL}/contests/${contestId}`, { headers });
-      setContests((prev) => prev.filter((contest) => contest._id !== contestId));
+      setContests((prev) =>
+        prev.filter((contest) => contest._id !== contestId)
+      );
       toast.success("Contest deleted successfully");
     } catch (error) {
       console.error("Delete contest error:", error);
-      toast.error(
-        error.response?.data?.error || "Failed to delete contest. Please try again."
-      );
+      toast.error("Failed to delete contest");
     }
   };
 
@@ -166,26 +214,28 @@ const Overview = () => {
     });
   };
 
+  useEffect(() => {
+    fetchContests();
+  }, [isAuthenticated]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-yellow-400" />
+        <Loader2 className="h-8 w-8 animate-spin text-custom-blue" />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-lvh bg-blue-50 p-6 space-y-6 overflow-auto w-full xl:w-[102rem] 3xl:w-[138rem] m-3">
+    <div className="flex flex-col h-lvh bg-gray-50 p-6 space-y-6 overflow-auto w-full xl:w-[102rem] 3xl:w-[138rem]">
       <div className="flex items-center justify-between w-full gap-3">
-        <h1 className="text-xl font-bold text-blue-800 flex-shrink-0">
-          Overview
-        </h1>
+        <h1 className="text-xl font-bold text-gray-800">Overview</h1>
         <button
           onClick={() => {
             setEditingContest(null);
             setIsModalOpen(true);
           }}
-          className="bg-yellow-400 hover:bg-yellow-500 text-blue-900 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors duration-200"
+          className="bg-custom-blue hover:bg-custom-blue/90 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors duration-200"
         >
           <Plus className="h-4 w-4" />
           Create Contest
@@ -225,7 +275,11 @@ const Overview = () => {
         onClose={() => setIsContestantModalOpen(false)}
         contestId={selectedContestId}
         setContests={setContests}
-        contestStatus={contests.isPublished ? "Published" : "Draft"}
+        contestStatus={
+          contests.find((c) => c._id === selectedContestId)?.isPublished
+            ? "Published"
+            : "Draft"
+        }
       />
     </div>
   );

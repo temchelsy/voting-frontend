@@ -1,3 +1,3 @@
-const API_URL = " https://voting-platform-server-xalc.onrender.com";
+const API_URL = " http://localhost:5000";
 
 export default API_URL
