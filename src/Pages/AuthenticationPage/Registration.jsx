@@ -20,7 +20,7 @@ const Registration = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/users/register`, {
+      const response = await fetch(`${API_URL}/users/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -28,11 +28,8 @@ const Registration = () => {
         body: JSON.stringify(data),
       });
 
-      setLoading(false);
-
       const responseText = await response.text();
-      console.log("Response Text:", responseText);
-
+      
       if (response.ok) {
         const responseData = JSON.parse(responseText);
         toast.success(
@@ -46,7 +43,6 @@ const Registration = () => {
         } catch (error) {
           errorData = { message: "Unknown error occurred" };
         }
-        console.log("Error Data:", errorData);
         toast.error(errorData.message || "Registration failed");
       }
     } catch (error) {
@@ -54,25 +50,30 @@ const Registration = () => {
       toast.error(
         "An error occurred during registration. Please try again later."
       );
+    } finally {
       setLoading(false);
     }
   };
 
   return (
     <>
-      <section className="bg-custom-first min-h-screen flex items-center justify-center">
+      <section className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-blue-800">
         <div className="flex flex-col w-full max-w-md px-6 py-8 space-y-8">
-          {/* Right Content */}
-          <div className="bg-custom-second rounded-lg shadow-md p-6 space-y-4 sm:p-8">
-            <h2 className="text-2xl font-bold text-center mb-6 text-white 3xl:text-4xl">
-              Create your account
-            </h2>
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-xl p-8 space-y-6">
+            <div className="text-center space-y-2">
+              <h2 className="text-3xl font-bold text-white">
+                Create your account
+              </h2>
+              <p className="text-gray-200">
+                Join Electrify and start creating your elections
+              </p>
+            </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div>
                 <label
                   htmlFor="username"
-                  className="block text-sm font-medium text-white mb-2 3xl:text-xl"
+                  className="block text-sm font-medium text-gray-200 mb-2"
                 >
                   Username
                 </label>
@@ -81,11 +82,11 @@ const Registration = () => {
                     required: "Username is required",
                   })}
                   type="text"
-                  className="bg-white border border-gray-300 w-full p-2.5 rounded-lg 3xl:h-24 3xl:w-full 3xl:text-3xl"
-                  placeholder="Username"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 text-white rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300"
+                  placeholder="Choose a username"
                 />
                 {errors.username && (
-                  <p className="text-red-500 text-sm">
+                  <p className="text-yellow-400 text-sm mt-1">
                     {errors.username.message}
                   </p>
                 )}
@@ -94,79 +95,92 @@ const Registration = () => {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-white mb-2 3xl:text-xl"
+                  className="block text-sm font-medium text-gray-200 mb-2"
                 >
-                  Your email
+                  Email Address
                 </label>
                 <input
                   {...register("email", {
                     required: "Email is required",
-                    pattern: /^[^@]+@[^@]+\.[^@]+$/,
+                    pattern: {
+                      value: /^[^@]+@[^@]+\.[^@]+$/,
+                      message: "Please enter a valid email address"
+                    }
                   })}
                   type="email"
-                  className="bg-white border border-gray-300 w-full p-2.5 rounded-lg 3xl:h-24 3xl:w-full 3xl:text-3xl"
-                  placeholder="name@cgmail.com"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 text-white rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300"
+                  placeholder="name@example.com"
                 />
                 {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email.message}</p>
+                  <p className="text-yellow-400 text-sm mt-1">{errors.email.message}</p>
                 )}
               </div>
 
               <div>
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-medium text-white mb-2 3xl:text-xl"
-                  >
-                    Password
-                  </label>
-                </div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-200 mb-2"
+                >
+                  Password
+                </label>
                 <div className="relative">
                   <input
                     {...register("password", {
                       required: "Password is required",
+                      minLength: {
+                        value: 8,
+                        message: "Password must be at least 8 characters"
+                      }
                     })}
                     type={passwordVisible ? "text" : "password"}
-                    className="bg-white border border-gray-300 w-full p-2.5 rounded-lg 3xl:h-24 3xl:w-full 3xl:text-3xl"
-                    placeholder="••••••••"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 text-white rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300"
+                    placeholder="Create a strong password"
                   />
                   <button
                     type="button"
                     onClick={() => setPasswordVisible(!passwordVisible)}
-                    className="absolute right-1 top-1/2 transform -translate-y-1/2 text-gray-600 3xl:text-3xl"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-300 hover:text-white transition-colors duration-200"
                   >
-                    {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+                    {passwordVisible ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
                   </button>
                 </div>
-
                 {errors.password && (
-                  <p className="text-red-500 text-sm">
+                  <p className="text-yellow-400 text-sm mt-1">
                     {errors.password.message}
                   </p>
                 )}
               </div>
 
-              <div className="mt-4">
-                <button
-                  type="submit"
-                  className="w-full bg-custom-blue text-white p-2.5 rounded-lg text-2xl 3xl:text-4xl"
-                  disabled={loading}
-                >
-                  {loading ? "Registering..." : "Sign up"}
-                </button>
-              </div>
+              <button
+                type="submit"
+                className="w-full bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-4 rounded-lg transition-colors duration-300 text-lg"
+                disabled={loading}
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Creating account...
+                  </span>
+                ) : (
+                  "Create Account"
+                )}
+              </button>
 
-              <p className="text-sm text-center mt-4 text-white 3xl:text-3xl">
-                Already have an account?{" "}
-                <Link to="/login" className="text-primary-600">
-                  Login here
-                </Link>
-              </p>
+              <div className="text-center">
+                <p className="text-gray-200">
+                  Already have an account?{" "}
+                  <Link to="/login" className="text-yellow-400 hover:text-yellow-300 font-medium transition-colors duration-300">
+                    Sign in
+                  </Link>
+                </p>
+              </div>
             </form>
           </div>
         </div>
       </section>
-      <div className="bg-white h-3 w-full"></div>
       
     </>
   );
