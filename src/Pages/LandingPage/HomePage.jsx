@@ -193,7 +193,7 @@ const HomePage = () => {
             Ready to Start Your Election?
           </h2>
           <p className="text-lg mb-8 max-w-2xl mx-auto">
-            Join thousands of organizations that trust VoteHub for their voting needs. Get started today and experience the future of digital democracy.
+            Join thousands of organizations that trust Electrify for their voting needs. Get started today and experience the future of digital democracy.
           </p>
           <Link to="/register">
             <button className="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold px-8 py-4 rounded-lg text-lg transition-colors duration-300">

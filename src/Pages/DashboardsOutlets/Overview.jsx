@@ -6,7 +6,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useAuth } from "../Contexts/AuthContext";
 import ContestItem from "../../Components/ContestItem";
-import API_URL from '../../Pages/Constants/Constants';
+import API_URL from "../../Pages/Constants/Constants";
 
 const Overview = () => {
   const { currentUser, currentUserLoading, isAuthenticated } = useAuth();
@@ -22,7 +22,7 @@ const Overview = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       toast.error("You are not authenticated. Please log in again.");
-      return null; // Return null to indicate no headers are available
+      return null;
     }
     return { Authorization: `Bearer ${token}` };
   }, []);
@@ -62,7 +62,7 @@ const Overview = () => {
 
     try {
       const headers = getAuthHeaders();
-      if (!headers) return; // If headers are null, stop the action
+      if (!headers) return;
 
       const isPublished = !publishedContests.has(contestId);
 
@@ -83,15 +83,15 @@ const Overview = () => {
           return newSet;
         });
 
-        setContests(prev =>
-          prev.map(c =>
-            c._id === contestId
-              ? { ...c, isPublished: isPublished }
-              : c
+        setContests((prev) =>
+          prev.map((c) =>
+            c._id === contestId ? { ...c, isPublished: isPublished } : c
           )
         );
 
-        toast.success(isPublished ? "Contest published!" : "Contest unpublished");
+        toast.success(
+          isPublished ? "Contest published!" : "Contest unpublished"
+        );
       }
     } catch (error) {
       console.error("Publish toggle error:", error);
@@ -107,7 +107,7 @@ const Overview = () => {
       }
 
       const formattedContestantId = contestantId.toString();
-      
+
       const objectIdRegex = /^[0-9a-fA-F]{24}$/;
       if (!objectIdRegex.test(formattedContestantId)) {
         toast.error("Invalid contestant ID format");
@@ -115,28 +115,29 @@ const Overview = () => {
       }
 
       const headers = getAuthHeaders();
-      if (!headers) return; // If headers are null, stop the action
+      if (!headers) return;
 
       const response = await axios.post(
         `${API_URL}/contests/${contestId}/vote`,
         { contestantId: formattedContestantId },
         {
           headers: {
-            'Content-Type': 'application/json',
-            ...headers
-          }
+            "Content-Type": "application/json",
+            ...headers,
+          },
         }
       );
 
       if (response.data.success) {
         toast.success("Vote cast successfully!");
-        await fetchContests(); 
+        await fetchContests();
       } else {
         throw new Error(response.data.error || "Failed to cast vote");
       }
     } catch (error) {
       console.error("Voting error:", error);
-      const errorMessage = error.response?.data?.error || error.message || "Failed to cast your vote";
+      const errorMessage =
+        error.response?.data?.error || error.message || "Failed to cast your vote";
       toast.error(errorMessage);
     }
   };
@@ -144,7 +145,7 @@ const Overview = () => {
   const handleDeleteContest = async (contestId) => {
     try {
       const headers = getAuthHeaders();
-      if (!headers) return; // If headers are null, stop the action
+      if (!headers) return;
 
       await axios.delete(`${API_URL}/contests/${contestId}`, { headers });
       setContests((prev) => prev.filter((contest) => contest._id !== contestId));
@@ -168,15 +169,15 @@ const Overview = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-custom-blue" />
+        <Loader2 className="h-8 w-8 animate-spin text-yellow-400" />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-lvh bg-gray-50 p-6 space-y-6 overflow-auto w-full xl:w-[102rem] 3xl:w-[138rem] m-3">
-      <div className="flex  items-center justify-between w-full gap-3">
-        <h1 className="text-xl font-bold text-gray-800 flex-shrink-0">
+    <div className="flex flex-col h-lvh bg-blue-50 p-6 space-y-6 overflow-auto w-full xl:w-[102rem] 3xl:w-[138rem] m-3">
+      <div className="flex items-center justify-between w-full gap-3">
+        <h1 className="text-xl font-bold text-blue-800 flex-shrink-0">
           Overview
         </h1>
         <button
@@ -184,13 +185,13 @@ const Overview = () => {
             setEditingContest(null);
             setIsModalOpen(true);
           }}
-          className="bg-custom-blue hover:bg-custom-blue/90 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors duration-200 "
+          className="bg-yellow-400 hover:bg-yellow-500 text-blue-900 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors duration-200"
         >
           <Plus className="h-4 w-4" />
           Create Contest
         </button>
       </div>
-  
+
       {contests.length === 0 ? (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-blue-700">
           No contests found. Create your first contest to get started!
@@ -212,22 +213,22 @@ const Overview = () => {
           ))}
         </div>
       )}
-  
+
       <ContestModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         setContests={setContests}
-        editingContest={editingContest} 
+        editingContest={editingContest}
       />
       <AddContestantModal
         isOpen={isContestantModalOpen}
         onClose={() => setIsContestantModalOpen(false)}
         contestId={selectedContestId}
         setContests={setContests}
-        contestStatus={contests.isPublished ? 'Published' : 'Draft'}
+        contestStatus={contests.isPublished ? "Published" : "Draft"}
       />
     </div>
   );
-}  
+};
 
 export default Overview;
