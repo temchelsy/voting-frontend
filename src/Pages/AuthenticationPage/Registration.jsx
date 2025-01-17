@@ -8,6 +8,7 @@ import API_URL from "../Constants/Constants";
 
 const Registration = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -15,9 +16,17 @@ const Registration = () => {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm();
 
+  const password = watch("password", "");
+
   const onSubmit = async (data) => {
+    if (data.password !== data.confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await fetch(`${API_URL}/users/register`, {
@@ -151,6 +160,39 @@ const Registration = () => {
                 )}
               </div>
 
+              <div>
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium text-gray-200 mb-2"
+                >
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <input
+                    {...register("confirmPassword", {
+                      required: "Please confirm your password",
+                      validate: value => 
+                        value === password || "Passwords do not match"
+                    })}
+                    type={confirmPasswordVisible ? "text" : "password"}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 text-white rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300"
+                    placeholder="Confirm your password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-300 hover:text-white transition-colors duration-200"
+                  >
+                    {confirmPasswordVisible ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
+                  </button>
+                </div>
+                {errors.confirmPassword && (
+                  <p className="text-yellow-400 text-sm mt-1">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
+              </div>
+
               <button
                 type="submit"
                 className="w-full bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-4 rounded-lg transition-colors duration-300 text-lg"
@@ -181,7 +223,6 @@ const Registration = () => {
           </div>
         </div>
       </section>
-      
     </>
   );
 };

@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Profile from './Profile';
-import { Home, Settings, Award, Users } from 'lucide-react'; 
+import { Home, Settings, Award, Users } from 'lucide-react';
 
 const NAVIGATION_ITEMS = [
-  { path: '/', label: 'Home', icon: <Home className="h-5 w-5 text-white" /> },
-  { path: '/dashboard', label: 'Overview', icon: <Users className="h-5 w-5 text-white" /> },
-  { path: '/dashboard/settings', label: 'Settings', icon: <Settings className="h-5 w-5 text-white" /> },
-  { path: '/dashboard/vote', label: 'Contests', icon: <Award className="h-5 w-5 text-white" /> }
+  { 
+    path: '/', 
+    label: 'Home', 
+    icon: <Home className="h-5 w-5 text-white" /> 
+  },
+  { 
+    path: '/dashboard', 
+    label: 'Overview', 
+    icon: <Users className="h-5 w-5 text-white" /> 
+  },
+  
 ];
 
 const Sidebar = () => {
@@ -18,7 +25,6 @@ const Sidebar = () => {
 
   return (
     <>
-
       <button
         onClick={toggleMenu}
         className="fixed top-4 left-4 z-50 p-2 rounded-lg text-black sm:hidden"
@@ -36,9 +42,9 @@ const Sidebar = () => {
 
       <aside
         className={`
-          fixed sm:static top-0 left-0 h-screen w-64 
-          bg-custom-blue transform transition-transform duration-300 
-          flex flex-col z-50 sm:translate-x-0 
+          fixed sm:static top-0 left-0 h-screen w-64
+          bg-blue-700 transform transition-transform duration-300
+          flex flex-col z-50 sm:translate-x-0
           ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
@@ -65,8 +71,8 @@ const Sidebar = () => {
                     onClick={() => setIsMenuOpen(false)}
                     className={`
                       flex items-center gap-3 p-3 rounded-lg w-full
-                      hover:bg-custom-third transition-colors duration-200
-                      ${location.pathname === path ? 'bg-custom-third' : ''}
+                      hover:bg-blue-800 transition-colors duration-200
+                      ${location.pathname === path ? 'bg-blue-800' : ''}
                     `}
                   >
                     {icon}
