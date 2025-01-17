@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <>
       {/* Main Footer Section */}
-      <footer className="bg-custom-blue py-10">
+      <footer className="bg-blue-800 py-10">
         <div className="container mx-auto px-5 grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* About Electrify */}
           <div>
@@ -23,7 +23,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center gap-3 text-gray-300">
                 <MdLocationOn size={20} />
-                <span>Electrify Office, Jouvence, Yaounde</span>
+                <span>Electrify Office, Yaounde, Cameroon</span>
               </li>
               <li className="flex items-center gap-3 text-gray-300">
                 <MdMarkEmailRead size={20} />
@@ -70,7 +70,7 @@ const Footer = () => {
       </footer>
 
       {/* Footer Bottom Section */}
-      <div className="bg-custom-blue py-4">
+      <div className="bg-blue-800 py-4">
         <div className="container mx-auto px-5 text-center text-sm text-gray-300">
           &copy; {new Date().getFullYear()} Electrify. Empowering every vote, every voice.
         </div>
