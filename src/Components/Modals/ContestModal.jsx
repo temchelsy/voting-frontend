@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { X, Upload, Loader2 } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { useAuth } from '../../Pages/Contexts/AuthContext'; 
+import { useAuth } from '../../Pages/Contexts/AuthContext';
 import API_URL from '../../Pages/Constants/Constants';
 
 const ContestModal = ({ isOpen, onClose, setContests }) => {
+  // Form state
   const [formData, setFormData] = useState({
     name: '',
     coverPhoto: null,
@@ -18,8 +19,9 @@ const ContestModal = ({ isOpen, onClose, setContests }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
-  const { currentUser } = useAuth(); 
+  const { currentUser } = useAuth();
 
+  // Form handlers
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -98,6 +100,35 @@ const ContestModal = ({ isOpen, onClose, setContests }) => {
     }
   };
 
+  // Render Input Field helper
+  const renderField = ({ label, name, type = 'text', ...props }) => (
+    <div className="space-y-1 sm:space-y-2">
+      <label htmlFor={name} className="block text-sm font-medium text-slate-50">
+        {label}
+      </label>
+      {type === 'textarea' ? (
+        <textarea
+          id={name}
+          name={name}
+          value={formData[name]}
+          onChange={handleInputChange}
+          className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          {...props}
+        />
+      ) : (
+        <input
+          type={type}
+          id={name}
+          name={name}
+          value={formData[name]}
+          onChange={handleInputChange}
+          className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          {...props}
+        />
+      )}
+    </div>
+  );
+
   return (
     <div
       className={`fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center p-4 ${
@@ -127,36 +158,21 @@ const ContestModal = ({ isOpen, onClose, setContests }) => {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             {/* Contest Name */}
-            <div className="space-y-1 sm:space-y-2">
-              <label htmlFor="name" className="block text-sm font-medium text-slate-50">
-                Contest Name
-              </label>
-              <input
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
-            </div>
+            {renderField({
+              label: 'Contest Name',
+              name: 'name',
+              required: true
+            })}
 
             {/* Description */}
-            <div className="space-y-1 sm:space-y-2">
-              <label htmlFor="description" className="block text-sm font-medium text-slate-50">
-                Contest Description
-              </label>
-              <textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                rows="3"
-                placeholder="Enter a short description for the contest"
-                required
-              />
-            </div>
+            {renderField({
+              label: 'Contest Description',
+              name: 'description',
+              type: 'textarea',
+              rows: "3",
+              placeholder: "Enter a short description for the contest",
+              required: true
+            })}
 
             {/* Cover Photo Upload */}
             <div className="space-y-1 sm:space-y-2">
@@ -187,34 +203,18 @@ const ContestModal = ({ isOpen, onClose, setContests }) => {
 
             {/* Date Selection */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1 sm:space-y-2">
-                <label htmlFor="startDate" className="block text-sm font-medium text-slate-50">
-                  Start Date
-                </label>
-                <input
-                  type="date"
-                  id="startDate"
-                  name="startDate"
-                  value={formData.startDate}
-                  onChange={handleInputChange}
-                  className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  required
-                />
-              </div>
-              <div className="space-y-1 sm:space-y-2">
-                <label htmlFor="endDate" className="block text-sm font-medium text-slate-50">
-                  End Date
-                </label>
-                <input
-                  type="date"
-                  id="endDate"
-                  name="endDate"
-                  value={formData.endDate}
-                  onChange={handleInputChange}
-                  className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  required
-                />
-              </div>
+              {renderField({
+                label: 'Start Date',
+                name: 'startDate',
+                type: 'date',
+                required: true
+              })}
+              {renderField({
+                label: 'End Date',
+                name: 'endDate',
+                type: 'date',
+                required: true
+              })}
             </div>
 
             {/* Action Buttons */}
